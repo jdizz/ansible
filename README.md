@@ -11,18 +11,20 @@ Follow the [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/
 
 1. Use Ubuntu 16.04+
 1. Run install_ansible.sh on your management node
-1. Update the hosts file
-1. If needed, update the ansible.cfg file
+1. Update the hosts file with IPs
+1. If needed, update the ansible.cfg file with defaults
 
+Ping hosts
+''' ansible all -m ping '''
 
 ## Playbooks
 * precheck_python.yml
     * Raw install of Python
-*
+* precheck_updates.yml
 
 ## Roles
-* Deploy Apache
-* Deploy HAProxy
-* Deploy public keys to authorized_keys file
-* Deploy Nagios
-* Update hostnames
+* deploy-apache
+* deploy-haproxy
+* deploy-keys
+* deploy-nagios
+* update-hostnames
