@@ -5,11 +5,14 @@
 
 A collection of [Ansible](https://www.ansible.com/) playbooks and roles.
 
-## How to use this repo
+## Setup
+
+Follow the [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html?extIdCarryOver=true&sc_cid=701f2000001OH6uAAG) installation guide.
+
 1. Use Ubuntu 16.04+
-1. Run install_ansible.sh
-1. Update hosts file
-1. If needed, update ansible.cfg file
+1. Run install_ansible.sh on your management node
+1. Update the hosts file
+1. If needed, update the ansible.cfg file
 
 
 ## Playbooks
