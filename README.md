@@ -14,7 +14,7 @@ Follow the [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/
 1. Update the hosts file with IPs
 1. If needed, update the ansible.cfg file with defaults
 
-Ping hosts
+Ping hosts:
 ``` ansible all -m ping ```
 
 ## Playbooks
