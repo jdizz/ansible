@@ -1,0 +1,17 @@
+[web01]
+apache01 ansible_host=$IPAddress
+
+[web02]
+apache02 ansible_host=$IPAddress
+
+[haproxy]
+lb01 ansible_host=$IPAddress
+
+[nagios]
+nagios01 ansible_host=$IPAddress
+
+[local]
+mgmt ansible_host=127.0.0.1 ansible_connection=local
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
