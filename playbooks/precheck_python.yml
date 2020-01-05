@@ -1,0 +1,17 @@
+---
+######################################################################
+# Ansible Pre-Check Python Playbook
+# Installs Python3 on all nodes
+######################################################################
+
+# Install Python3 to support Ansible plays
+- name: Install Python3 on all nodes
+  hosts: all
+  # Can't gather host facts
+  gather_facts: false
+  become: yes
+  tasks:
+
+  # Raw install of Python3
+  - name: Install python
+    raw: (sudo apt-get -y update && apt-get install -y python3)

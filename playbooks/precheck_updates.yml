@@ -1,0 +1,45 @@
+---
+######################################################################
+# Ansible Pre-Check Updates Playbook
+# Updates all nodes, except Ansible host
+######################################################################
+
+- hosts: all, !local
+  gather_facts: false
+  become: yes
+  tasks:
+  # Update, upgrade, and ignore apt dialogs
+  - name: Update apt cache
+    apt:
+      update_cache: yes
+
+  - name: Upgrade all packages to the latest version
+    apt:
+      name: "*"
+      state: latest
+      force_apt_get: yes
+  
+  - name: Check the uptime prior reboot
+    shell: uptime
+    register: UPTIME_PRE_REBOOT
+
+  - debug: msg={{UPTIME_PRE_REBOOT.stdout}}
+
+  - name: Reboot system if required
+    command: shutdown -r now 'Rebooting to complete system upgrade'
+              removes=/var/run/reboot-required
+
+  # Wait for reboot to complete
+  - name: wait for host to finish reboot
+    wait_for:
+      port: "{{ (ansible_port|default(ansible_ssh_port))|default(22) }}"
+      host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+      search_regex: OpenSSH
+      delay: 10  # Do not check for at least 10 sec
+    connection: local
+
+  - name: Check the uptime post reboot
+    shell: uptime
+    register: UPTIME_POST_REBOOT
+
+  - debug: msg={{UPTIME_POST_REBOOT.stdout}}
