@@ -1,0 +1,12 @@
+[all:vars]
+ansible_connection = local
+
+[spine]
+dd-pdx-nx01
+dd-pdx-nx02
+
+[leaf]
+#dd-pdx-3850-01
+#dd-pdx-3850-02
+
+
