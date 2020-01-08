@@ -1,0 +1,8 @@
+# .netauth file
+---
+
+cisco:
+  nexus:
+    username: "bob"
+    password: "$2y$12$9y0cpsvEnbAA2UyU8VDq2OupRe/gmNGrvY..2zyUNJgMi7q.MGQc2"
+
