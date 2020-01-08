@@ -1,0 +1,20 @@
+---
+
+  - name: VLAN Build
+    hosts: spine
+    connection: local
+    gather_facts: no
+    vars:
+        vname: core
+        vid: 1001
+        vrange: "100,200,300-1000"
+    
+    tasks:
+
+      - name: Ensure VLAN Exists
+        nxos_vlan: vlan_id={{ vid }} state=present host={{ iventory_hostname }}
+        with_items: abc
+      
+      - name: Ensure VLAN Range Exists
+        nxos_vlan: vlan_range={{ vrange }} state=present host={{ inventory_hostname }}
+        with_items: abc

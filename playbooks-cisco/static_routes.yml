@@ -1,0 +1,12 @@
+# Playbook to build static routes
+---
+
+- name: Build Static Routes
+  hosts: spine
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: "Static route to CSR1000V"
+      nxos_static_routes: prefix=1.1.1.0/24 next_hop=10.1.1.2 route_name=demo vrf=deafult host={{ inventory_hostname }}
