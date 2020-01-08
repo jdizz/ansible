@@ -1,0 +1,65 @@
+# Playbook for pan01 deployment in AWS
+---
+
+- name: Deploy pan01
+  hosts: pan01
+  connection: local
+  gather_facts: False
+
+  roles:
+    - role: PaloAltoNetworks.paloaltonetworks
+
+  vars:
+    new_password: 'paloalto'
+    key_filename: '/Users/jd/test'
+
+  tasks:
+  # get credentials from Vault (If using)
+  - name: Get credentials from Ansible Vault
+    include_vars: 'firewall-secrets.yml'
+    no_log: 'yes'
+
+  # create admin account
+  - name: 'Admin "bob" as a device admin administrator'
+    panos_admin:
+      ip_address: '{{ ip_address }}'
+      password: '{{ password }}'
+      admin_username: 'bob'
+      admin_password: 'admin'
+      device_admin: true
+      commit: false
+
+  # change admin password
+  - name: Change password with SSH
+    panos_admpwd:
+      ip_address: '{{ ip_address }}'
+      password: '{{ password }}'
+      newpassword: '{{ new_password }}'
+      key_filename: '{{ key_filename }}'
+
+  # create interfaces
+  # create external zone
+  - name: enable DHCP client on ethernet1/1 in zone external
+    panos_interface:
+      ip_address: '{{ ip_address }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      if_name: "ethernet1/1"
+      zone_name: "external"
+      create_default_route: "yes"
+      operation: "update"
+      commit: False
+
+  # crete internal zone
+  - name: ethernet1/2 as static in zone internal
+    panos_interface:
+      ip_address: '{{ ip_address }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      if_name: "ethernet1/2"
+      mode: "layer3"
+      ip: ["10.1.1.1/24"]
+      enable_dhcp: false
+      zone_name: "internal"
+      operation: "update"
+      commit: False
