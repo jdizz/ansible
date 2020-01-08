@@ -1,0 +1,23 @@
+# Restart Playbook
+---
+- name: Restart Firewall
+  hosts: pan01
+  connection: local
+  gather_facts: False
+
+  roles:
+    - role: PaloAltoNetworks.paloaltonetworks
+  
+  tasks:
+  
+  # If using Vault (If not manually call)
+  - name: Get Credentials from Ansible Vault
+    include_vars: 'firewall_secrets.yml'
+    no_log: yes
+
+  # Restart device
+  - name: Restart PANOS
+    panos_restart:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
