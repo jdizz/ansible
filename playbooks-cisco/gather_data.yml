@@ -1,0 +1,24 @@
+# Gather Data Playbook
+---
+
+- name: Gather Data
+  hosts: spine
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+  - name: Get Neighbors
+    nxos_get_neighbors: type=cdp host="{{ inventory_hostname }}"
+    register: my_neighbors
+  
+  - name: Get Routing Table for MGMT VRF
+    nxos_command:
+      type: show
+      host: "{{ inventory_hostname }}"
+      command: "show ip route vfr management"
+    register: my_routes
+  
+  - name: Store to File
+    template: src:templates/data.j2 dest=data/{{ iventory_hostname }}_gather_data.json
+  
