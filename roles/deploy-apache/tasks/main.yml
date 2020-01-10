@@ -1,0 +1,47 @@
+######################################################################
+# Deploy Apache Role
+######################################################################
+# This role provisions a basic apache web server and serves 'a' at index.html
+---
+# Install apache
+- name: Install Apache
+  apt: 
+    name: apache2 
+    state: latest
+
+# Remove default apache test page
+- name: Remove the Apache test page
+  file:
+    path: /var/www/html/index.html
+    state: absent
+
+# Create 'a' index.html at /tmp/
+- name: Create index.html file at /tmp/
+  copy:
+    dest: /tmp/index.html
+    owner: ubuntu
+    mode: '0777'
+    content: |
+      <html>
+      <body>
+      <h1>a</h1>
+      </body>
+      </html>
+
+# Copy 'a' index.html to apache directory
+- name: Copy /tmp/index.html file to /var/www/html/index.html
+  shell: cp /tmp/index.html /var/www/html/index.html
+
+# Make sure permissions are good
+- name: Change file ownership, group and permissions for /var/www/html/index.html
+  file:
+    path: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0755' 
+
+# Cleanup 'a' index.html file from /tmp/
+- name: Remove /tmp/index.html
+  file:
+    path: /tmp/index.html
+    state: absent
