@@ -1,0 +1,67 @@
+######################################################################
+# Lockdown MGMT Playbook
+######################################################################
+# This playbook locks down the mgmt node:
+# 	allow public ssh access
+# 	allow ssh access to other nodes
+# 	block all other unused/unnecessary ports
+---
+# UFW Configuration for mgmt node
+- name: Allow SSH
+  ufw:
+    rule: allow
+    interface: eth0
+    direction: in
+    port: '22'
+    proto: tcp
+  
+- name: Allow SSH to apache node
+  ufw:
+    rule: allow
+    interface: eth0
+    direction: out
+    dest: $IP
+    port: '22'
+    proto: tcp
+        
+- name: Allow SSH to haproxy node
+  ufw:
+    rule: allow
+    interface: ens5
+    direction: out
+    dest: $IP
+    port: '22'
+    proto: tcp
+
+- name: Allow tcp/443 for apt-get
+  ufw:
+    rule: allow
+    port: '443'
+    proto: tcp
+    direction: out
+
+- name: Allow tcp/80 for apt-get
+  ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+    direction: out
+
+- name: Allow outgoing DNS for apt-get
+  ufw:
+    rule: allow
+    port: '53'
+    direction: out
+
+# Enable rate-limiting to protect against brute force attacks
+- name: Enable SSH rate limiting
+  ufw:
+    rule: limit
+    port: '22'
+    proto: tcp   
+
+# Enable UFW with default reject rule
+- name: Enable and reject all other traffic
+  ufw: 
+    state: enabled 
+    policy: reject
