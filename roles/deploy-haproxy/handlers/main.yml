@@ -1,0 +1,19 @@
+######################################################################
+# HAProxy Handlers
+######################################################################
+---
+- name: Start haproxy service
+  service:
+      name: haproxy
+      state: started
+      enabled: yes
+
+- name: Restart haproxy service
+  service: 
+      name: haproxy 
+      state: restarted
+
+- name: Reload haproxy service
+  service: 
+      name: haproxy 
+      state: reloaded

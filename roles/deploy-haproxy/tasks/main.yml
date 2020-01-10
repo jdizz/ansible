@@ -1,0 +1,33 @@
+######################################################################
+# HAProxy Role
+######################################################################
+# This role installs and configures haproxy using the template file:
+---
+- name: Install HAProxy
+  apt: 
+    name: haproxy 
+    state: present  
+
+# Copy HAProxy configuration file to /etc/haproxy/ directory
+- name: Add HAProxy configuration file
+  template: 
+    src: haproxy.cfg.j2 
+    dest: /etc/haproxy/haproxy.cfg
+    owner: ubuntu
+    mode: '0755'
+
+# Start HAProxy service  
+- name: Start HAProxy service
+  service:
+    name: haproxy
+    state: started
+    enabled: yes
+
+# Configure HAProxy auto-start
+- name: Configure HAProxy Auto Start
+  shell: systemctl enable haproxy.service
+
+# Start HAProxy and call configuration file
+- name: Start HAProxy
+  shell: 
+    cmd: haproxy -f /etc/haproxy/haproxy.cfg

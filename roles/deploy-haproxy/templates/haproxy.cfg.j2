@@ -1,0 +1,70 @@
+######################################################################
+# HAProxy Configuration File
+######################################################################
+# This role installs and configures HAProxy:
+#  See backend block - uses round-robin
+#  See backend block - configures sticky load balancer
+#  See backend block - switches when a webserver goes down, does not switch back when the webserver comes back up
+#  See backend block - passes the original requesting IP to the webservers
+#  See frontend/backend block - uses haproxy tcp/60000-65000 forwarding to apache tcp/80
+
+# Global Settings
+global
+    maxconn 4096
+    daemon
+    log /dev/log local0
+    user ubuntu
+    group sudo
+    stats socket /run/haproxy/admin.sock user ubuntu group sudo mode 660 level admin
+
+# Default Settings
+defaults
+    log global
+    mode http
+    option httplog
+    # Retry connection attempt 3 times when connection is refused or times out
+    retries 3 
+    maxconn 2000
+    timeout connect 10s
+    timeout client 30s
+    timeout server 30s
+
+# For testing, enable stats page on tcp/9999
+#listen stats
+#    bind *:9999
+#    stats enable
+#    stats hide-version
+#    stats uri /stats
+#    stats auth admin:admin@123
+
+# A frontend that accepts requests from clients
+frontend http
+    # Use port range 60000-650000
+    bind $IP_haproxy:60000-65000
+    default_backend apache
+
+# Web servers that fulfill the requests
+backend apache
+    # Default Load Balancing Scheme. Requests are allocated one server at a time. 
+    # Smooth and fair distribution.
+    balance roundrobin
+
+    # Allows for source IP persistence (aka a sticky load balancer) using in-memory... 
+    # table of source IPs. Client sticks until table entry expires or server fails... 
+    # Once failed server comes back online sessions will not be redirected to it... 
+    stick-table type ip size 1m expire 1h
+    stick on src
+    
+    # Pass requesting IP to web servers
+    # Add s "X-Forward-For" HTTP header to requests sent to the web servers
+    option forwardfor
+    
+    # Include port of the client request
+    http-request set-header X-Forwarded-Port %[dst_port]
+    
+    # Insert cookie for session stickiness (aka session persistence).
+    cookie HAProxy insert indirect nocache
+    option httpchk HEAD /
+    server apache $IP_apache:80 check cookie apache
+    # Add second web server
+    #server apache02 $IP:80 check cookie apache02
