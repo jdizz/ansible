@@ -1,0 +1,12 @@
+######################################################################
+# Deploy-Keys Role
+######################################################################
+# This role will deploy public keys for the referenced user
+# Public key files are called from the /vars/main.yml file
+---
+- name: Add SSH keys to ubuntu user
+  authorized_key:
+    user: ubuntu
+    key: "{{ '\n'.join(ssh_users|selectattr('root')|map(attribute='pubkeys')|flatten) }}"
+    state: present
+    exclusive: true

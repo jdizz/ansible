@@ -1,0 +1,21 @@
+# Variables to pass public keys 
+ssh_users:
+      - name: key1
+        pubkeys:
+          - ''
+        root: true
+
+      - name: key2
+        pubkeys:
+          - ''
+        root: true
+
+      - name: key3
+        pubkeys:
+          - ''
+        root: true
+      
+      - name: key4
+        pubkeys:
+          - ''
+        root: true
