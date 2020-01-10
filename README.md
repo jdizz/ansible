@@ -15,14 +15,18 @@ Follow the [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/
 1. If needed, update the ansible.cfg file with defaults
 
 Ping hosts:
-``` ansible all -m ping ```
+
+```ansible all -m ping```
 
 ## Playbooks
+
 * precheck_python.yml
-    * Raw install of Python
+  * Raw install of Python
+
 * precheck_updates.yml
 
 ## Roles
+
 * deploy-apache
 * deploy-haproxy
 * deploy-keys
