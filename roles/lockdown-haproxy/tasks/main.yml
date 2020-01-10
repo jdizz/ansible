@@ -1,0 +1,51 @@
+######################################################################
+# Lockdown HAProxy Playbook
+######################################################################
+# This playbook locks down the haproxy node:
+# 	allow ssh from mgmt
+#   make port range 60000-65000 on the load balancer all get fed to the web servers on port 80
+# 	block all other unused/unnecessary ports
+---
+# UFW Configuration for HAProxy node
+- name: Allow SSH tcp/22 from mgmt
+  ufw:
+    rule: allow
+    interface: eth0
+    direction: in
+    from_ip: $IP
+    port: '22'
+    proto: tcp
+
+- name: Allow HAProxy tcp/60000:65000
+  ufw:
+    rule: allow
+    interface: ens5
+    direction: in
+    to_port: 60000:65000
+    proto: tcp   
+
+- name: Allow tcp/443 for apt-get
+  ufw:
+    rule: allow
+    port: '443'
+    proto: tcp
+    direction: out
+
+- name: Allow tcp/80 for apt-get
+  ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+    direction: out
+
+- name: Allow outgoing DNS for apt-get
+  ufw:
+    rule: allow
+    port: '53'
+    direction: out
+
+# Enable UFW with default reject rule
+- name: Enable and reject all other traffic
+  ufw: 
+    state: enabled 
+    policy: reject
